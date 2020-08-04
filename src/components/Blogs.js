@@ -48,63 +48,94 @@ let blogs = [
   }
 ];
 
+function searchIt(term) {
+	return function(item) {
+		return item.subject.toLowerCase().includes(term.toLowerCase());
+	}
+}
+
 class Blogs extends Component {
-  state = { blogs:blogs, name: 'Wilson' };
+	state = { blogs, searchTerm: '' };
 
-  onDelete = (id) => {
-    const updatedBlog = this.state.blogs.filter((item) => item.objectId !== id);
+	onDelete = (id) => {
+		const updatedBlog = this.state.blogs.filter((item) => item.objectId !== id);
 
-    this.setState({
-      blogs: updatedBlog
-    });
-    console.log(`Delete ${id}`);
-  };
+		this.setState({
+			blogs: updatedBlog
+		});
+		console.log(`Delete ${id}`);
+	};
 
-  render() {
-    return (
-      <div
-        style={{
-          marginTop: '100px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column'
-        }}
-      >
-        {this.state.blogs.map((blog, idx) => {
-          const { objectId, title, author, subject, article } = blog;
-          return (
-            <div
-              key={objectId}
-              className='ui card'
-              style={{ width: '75%', padding: '20px' }}
-            >
-              <div className='content'>
-                <div className='header'>{title}</div>
-                <br />
-                <div className='meta'>Author: {author}</div>
-                <br />
-                <div className='meta'>Subject: {subject}</div>
-                <hr />
-                <div className='description'>{article}</div>
-              </div>
-              <div>
-                <button
-                  className='ui primary button'
-                  style={{ margin: '10px 15px' }}
-                  onClick={() => {
-                    this.onDelete(blog.objectId);
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
+	handleChange = event => {
+		console.log(event.target.value);
+
+		this.setState({
+			searchTerm: event.target.value
+		},
+		() => {
+			console.log(this.state.searchTerm);
+		});
+	};
+
+	render() {
+		return (
+		<div
+			style={{
+				marginTop: '100px',
+				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+				flexDirection: 'column'
+			}}
+		>
+
+		<form className="ui form">
+			<div className="field">
+				<input
+					type="text"
+					placeholder="Search by Subject"
+					onChange={this.handleChange}
+				/>
+			</div>
+		</form>
+
+		{
+			this.state.blogs.filter(searchIt(this.state.searchTerm))
+			.map((blog) => {
+				const { objectId, title, author, subject, article } = blog;
+				return (
+					<div
+						key={objectId}
+						className='ui card'
+						style={{ width: '75%', padding: '20px' }}
+					>
+						<div className='content'>
+							<div className='header'>{title}</div>
+							<br />
+							<div className='meta'>Author: {author}</div>
+							<br />
+							<div className='meta'>Subject: {subject}</div>
+							<hr />
+							<div className='description'>{article}</div>
+						</div>
+						<div>
+							<button
+								className='ui primary button'
+								style={{ margin: '10px 15px' }}
+								onClick={() => {
+								this.onDelete(blog.objectId);
+								}}
+							>
+							Delete
+							</button>
+						</div>
+					</div>
+				);
+			})
+		}
+		</div>
+		);
+	}
 }
 
 export default Blogs;
