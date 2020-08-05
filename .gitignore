@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/blogger-fullstack/node/node_modules
 /.pnp
 .pnp.js
 
